@@ -1,0 +1,23 @@
+Ziwei Liu
+Fri, Sep 4, 8:11 PM (16 hours ago)
+to me
+
+Hi,
+
+Thank you for your interest in our work! The DeepFashion dataset is now officially released at: http://mmlab.ie.cuhk.edu.hk/projects/DeepFashion.html , and can be downloaded from: https://drive.google.com/open?id=0B7EVK8r0v71pQ2FuZ0k0QnhBQnc (Google Drive) or https://pan.baidu.com/s/1PwJq0U2UPBWKkZvOR2lefQ (Baidu Drive).
+
+Five benchmarks are developed using the DeepFashion database, including 'Attribute Prediction', 'In-shop Clothes Retrieval', 'Consumer-to-shop Clothes Retrieval', 'Landmark Detection' and 'Fashion Synthesis'.
+
+The image zip file passwords are listed as follows:
+  - In-shop Clothes Retrieval Benchmark: mmlab_DeepFashion_inshop
+  - Consumer-to-shop Clothes Retrieval Benchmark: mmlab_DeepFashion_consumer2shop
+  - Fashion Synthesis Benchmark: mmlab_DeepFashion_fashionsynth
+
+Note that the data and labels of the 'Attribute Prediction Benchmark' and 'Landmark Detection Benchmark' are released without encryption.
+
+More useful labels, annotations, and evaluation results for each benchmark will be released soon.
+
+Enjoy and please feel free to feed back in case of any question!
+
+Best,
+DeepFashion team
