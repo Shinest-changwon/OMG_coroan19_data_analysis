@@ -11,18 +11,30 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.pylab as py
 
-# 한글 폰트 사용
-!sudo apt-get install -y fonts-nanum
-!sudo fc-cache -fv
-!rm ~/.cache/matplotlib -rf
+"""아래 코드는 한글 폰트 실행하는 코드이며 실행 후 코랩에서는 '런타임 다시 시작' 후 다른 코드들을 실행해야 한다."""
+
+# Commented out IPython magic to ensure Python compatibility.
+# 한글 폰트 불러오기
+
+!apt -qq -y install fonts-nanum > /dev/null
+
+import matplotlib.font_manager as fm
+
+fontpath = '/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
+
+font = fm.FontProperties(fname=fontpath, size=9)
+
+fm._rebuild()
+
+# 그래프에 retina display 적용
+
+# %config InlineBackend.figure_format = 'retina'
+
+# Colab 의 한글 폰트 설정
 
 plt.rc('font', family='NanumBarunGothic')
 
-time = pd.read_csv('./drive/My Drive/Colab Notebooks/dress_up/corona_visualization/Time.csv')
-timeAge = pd.read_csv('./drive/My Drive/Colab Notebooks/dress_up/corona_visualization/TimeAge.csv')
-timeGender = pd.read_csv('./drive/My Drive/Colab Notebooks/dress_up/corona_visualization/TimeGender.csv')
-
-patientInfo = pd.read_csv('./drive/My Drive/Colab Notebooks/dress_up/corona_visualization/PatientInfo.csv')
+patientInfo = pd.read_csv('./drive/My Drive/Colab Notebooks/Warmingup_Project/corona_visualization/PatientInfo.csv')
 
 patientInfo['infection_case'].unique()
 
@@ -55,7 +67,7 @@ patientInfo['infection_case'].unique()
 
 """# 지역별 확진자 수 증가 양상"""
 
-timeProvince = pd.read_csv('./drive/My Drive/Colab Notebooks/dress_up/corona_visualization/TimeProvince.csv')
+timeProvince = pd.read_csv('./drive/My Drive/Colab Notebooks/Warmingup_Project/corona_visualization/TimeProvince.csv')
 timeProvince
 
 timeProvince['province'].unique() # province의 모든 값
@@ -90,21 +102,27 @@ confirmed.iloc[:,17:23]
 
 # 지역별 누적 확진자 수 증가 양상
 
-plt.title("지역별 누적 확진자 수 증가 양상")
+ax = confirmed.plot(kind='line', y='youngnam', color='red', label='영남지방')
 
-plt.plot(confirmed.index, confirmed['youngnam'], label='youngnam')
-plt.plot(confirmed.index, confirmed['honam'], label='honam')
-plt.plot(confirmed.index, confirmed['hosae'], label='hosae')
-plt.plot(confirmed.index, confirmed['sudo'], label='sudo')
-plt.plot(confirmed.index, confirmed['gandong'], label='gandong')
-plt.legend(loc=2)
-plt.xlabel('date', fontsize=20)
-plt.ylabel('num_patient', fontsize=20)
-plt.xticks(rotation=90)
-plt.legend(loc=2, fontsize=15)
-plt.xlabel('date')
-plt.ylabel('num_patient')
+ax.set_xlabel('날짜', fontsize=20)
+ax.set_ylabel('인원 수', fontsize=20)
+
+# plt.title("지역별 누적 확진자 수 증가 양상")
+
+# plt.plot(confirmed.index, confirmed['youngnam'], label='youngnam')
+# plt.plot(confirmed.index, confirmed['honam'], label='honam')
+# plt.plot(confirmed.index, confirmed['hosae'], label='hosae')
+# plt.plot(confirmed.index, confirmed['sudo'], label='sudo')
+# plt.plot(confirmed.index, confirmed['gandong'], label='gandong')
+# plt.legend(loc=2)
+# plt.xlabel('date', fontsize=20)
+# plt.ylabel('num_patient', fontsize=20)
+# plt.xticks(rotation=90)
+# plt.legend(loc=2, fontsize=15)
+# plt.xlabel('date')
+# plt.ylabel('num_patient')
 # py.rcParams["figure.figsize"] = 40, 4
+plt.tight_layout()
 plt.show()
 
 """# 지역별 신규 확진자 수 증가 양상"""
@@ -158,77 +176,91 @@ confirmed['gandong_new'] = gandong_new_list
 
 confirmed.iloc[:, 22:29]
 
+"""# 4. 지역별 신규 확진자 최대치인 날짜 구하기"""
+
+max_new_confirmed_date_youngnam = confirmed['youngnam_new'].idxmax()
+max_new_confirmed_num_youngnam = confirmed['youngnam_new'].max()
+max_new_confirmed_date_honam = confirmed['honam_new'].idxmax()
+max_new_confirmed_num_honam = confirmed['honam_new'].max()
+max_new_confirmed_date_hosae = confirmed['hosae_new'].idxmax()
+max_new_confirmed_num_hosae = confirmed['hosae_new'].max()
+max_new_confirmed_date_sudo = confirmed['sudo_new'].idxmax()
+max_new_confirmed_num_sudo = confirmed['sudo_new'].max()
+max_new_confirmed_date_gandong = confirmed['gandong_new'].idxmax()
+max_new_confirmed_num_gandong = confirmed['gandong_new'].max()
+
+print('영남지방 신규 확진자 최대인 날짜 :', max_new_confirmed_date_youngnam, ', 최대 신규 확진자 수 :',max_new_confirmed_num_youngnam, '명')
+print('호남지방 신규 확진자 최대인 날짜 :', max_new_confirmed_date_honam, ', 최대 신규 확진자 수 :',max_new_confirmed_num_honam,'명')
+print('호서지방 신규 확진자 최대인 날짜 :', max_new_confirmed_date_hosae, ', 최대 신규 확진자 수 :',max_new_confirmed_num_hosae,'명')
+print('수도권 신규 확진자 최대인 날짜: ', max_new_confirmed_date_sudo, ', 최대 신규 확진자 수 :',max_new_confirmed_num_sudo,'명')
+print('관동지방 신규 확진자 최대인 날짜: ', max_new_confirmed_date_gandong,', 최대 신규 확진자 수 :',max_new_confirmed_num_gandong,'명')
+
 """# 수도권 신규 확진자 및 누적 확진자 수 증가 양상"""
 
 # 수도권 신규 확진자 및 누적 확진자 수 증가 양상 피벗 테이블 시각화
 
-ax = confirmed.plot(kind='line', y='sudo', color='DarkBlue', fontsize=20)
-ax2 = confirmed.plot(kind='bar', y='sudo_new', secondary_y=True, color='Red', ax=ax, fontsize=20)
+ax = confirmed.plot(kind='line', y='sudo', color='DarkBlue',figsize=(30,5), rot=90, fontsize=20, label='누적 확진자')
+ax2 = confirmed.plot(kind='bar', y='sudo_new', secondary_y=True, color='Red', ax=ax, fontsize=20, label='신규 확진자')
 # plt.legend(loc=2)
-ax.legend(['누적 확진자'], fontsize=15) # 누적 확진자 범례가 출력되지 않는 문제 해결 필요!!!!!!
-ax2.legend(['신규 확진자'], fontsize=15) 
-plt.title('수도권 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=50)
+ax.set_xlabel('날짜', fontsize=20)
 ax.set_ylabel('누적 확진자', fontsize=20)
 ax2.set_ylabel('신규 확진자', fontsize=20)
-ax.set_xlabel('date', fontsize=20)
+plt.title('수도권 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=30)
+plt.tight_layout()
 plt.show()
 
 """# 영남지방 신규 확진자 및 누적 확진자 수 증가 양상"""
 
 # 영남지방 신규 확진자 및 누적 확진자 수 증가 양상 피벗 테이블 시각화
 
-ax = confirmed.plot(kind='line', y='youngnam', color='DarkBlue', fontsize=20)
-ax2 = confirmed.plot(kind='bar', y='youngnam_new', secondary_y=True, color='Red', ax=ax, fontsize=20)
+ax = confirmed.plot(kind='line', y='youngnam', color='DarkBlue',figsize=(30,5), rot=90, fontsize=20, label='누적 확진자')
+ax2 = confirmed.plot(kind='bar', y='youngnam_new', secondary_y=True, color='Red', ax=ax, fontsize=20, label='신규 확진자')
 # plt.legend(loc=2)
-ax.legend(['누적 확진자'], fontsize=15) # 누적 확진자 범례가 출력되지 않는 문제 해결 필요!!!!!!
-ax2.legend(['신규 확진자'], fontsize=15) 
-plt.title('영남지방 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=50)
+ax.set_xlabel('날짜', fontsize=20)
 ax.set_ylabel('누적 확진자', fontsize=20)
 ax2.set_ylabel('신규 확진자', fontsize=20)
-ax.set_xlabel('date', fontsize=20)
+plt.title('영남지방 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=30)
+plt.tight_layout()
 plt.show()
 
 """# 호남지방 신규 확진자 및 누적 확진자 수 증가 양상"""
 
 # 호남지방 신규 확진자 및 누적 확진자 수 증가 양상 피벗 테이블 시각화
 
-ax = confirmed.plot(kind='line', y='honam', color='DarkBlue', fontsize=20)
-ax2 = confirmed.plot(kind='bar', y='honam_new', secondary_y=True, color='Red', ax=ax, fontsize=20)
+ax = confirmed.plot(kind='line', y='honam', color='DarkBlue',figsize=(30,5), rot=90, fontsize=20, label='누적 확진자')
+ax2 = confirmed.plot(kind='bar', y='honam_new', secondary_y=True, color='Red', ax=ax, fontsize=20, label='신규 확진자')
 # plt.legend(loc=2)
-ax.legend(['누적 확진자'], fontsize=15) # 누적 확진자 범례가 출력되지 않는 문제 해결 필요!!!!!!
-ax2.legend(['신규 확진자'], fontsize=15) 
-plt.title('호남지방 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=50)
+ax.set_xlabel('날짜', fontsize=20)
 ax.set_ylabel('누적 확진자', fontsize=20)
 ax2.set_ylabel('신규 확진자', fontsize=20)
-ax.set_xlabel('date', fontsize=20)
+plt.title('호남지방 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=30)
+plt.tight_layout()
 plt.show()
 
 """# 호서지방 신규 확진자 및 누적 확진자 수 증가 양상"""
 
 # 호서지방 신규 확진자 및 누적 확진자 수 증가 양상 피벗 테이블 시각화
 
-ax = confirmed.plot(kind='line', y='hosae', color='DarkBlue', fontsize=20)
-ax2 = confirmed.plot(kind='bar', y='hosae_new', secondary_y=True, color='Red', ax=ax, fontsize=20)
+ax = confirmed.plot(kind='line', y='hosae', color='DarkBlue',figsize=(30,5), rot=90, fontsize=20, label='누적 확진자')
+ax2 = confirmed.plot(kind='bar', y='hosae_new', secondary_y=True, color='Red', ax=ax, fontsize=20, label='신규 확진자')
 # plt.legend(loc=2)
-ax.legend(['누적 확진자'], fontsize=15) # 누적 확진자 범례가 출력되지 않는 문제 해결 필요!!!!!!
-ax2.legend(['신규 확진자'], fontsize=15) 
-plt.title('호서지방 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=50)
+ax.set_xlabel('날짜', fontsize=20)
 ax.set_ylabel('누적 확진자', fontsize=20)
 ax2.set_ylabel('신규 확진자', fontsize=20)
-ax.set_xlabel('date', fontsize=20)
+plt.title('호서지방 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=30)
+plt.tight_layout()
 plt.show()
 
 """# 관동지방 신규 확진자 및 누적 확진자 수 증가 양상"""
 
 # 관동지방 신규 확진자 및 누적 확진자 수 증가 양상 피벗 테이블 시각화
 
-ax = confirmed.plot(kind='line', y='gandong', color='DarkBlue', fontsize=20)
-ax2 = confirmed.plot(kind='bar', y='gandong_new', secondary_y=True, color='Red', ax=ax, fontsize=20)
+ax = confirmed.plot(kind='line', y='gandong', color='DarkBlue',figsize=(30,5), rot=90, fontsize=20, label='누적 확진자')
+ax2 = confirmed.plot(kind='bar', y='gandong_new', secondary_y=True, color='Red', ax=ax, fontsize=20, label='신규 확진자')
 # plt.legend(loc=2)
-ax.legend(['누적 확진자'], fontsize=15) # 누적 확진자 범례가 출력되지 않는 문제 해결 필요!!!!!!
-ax2.legend(['신규 확진자'], fontsize=15) 
-plt.title('관동지방 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=50)
+ax.set_xlabel('날짜', fontsize=20)
 ax.set_ylabel('누적 확진자', fontsize=20)
 ax2.set_ylabel('신규 확진자', fontsize=20)
-ax.set_xlabel('date', fontsize=20)
+plt.title('관동지방 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=30)
+plt.tight_layout()
 plt.show()
