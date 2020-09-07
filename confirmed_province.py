@@ -11,20 +11,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.pylab as py
 
-"""아래 코드는 한글 폰트 실행하는 코드이며 실행 후 코랩에서는 '런타임 다시 시작' 후 다른 코드들을 실행해야 한다."""
-
-# Commented out IPython magic to ensure Python compatibility.
-# 한글 폰트 불러오기
 
 !apt -qq -y install fonts-nanum > /dev/null
 
 import matplotlib.font_manager as fm
 
 fontpath = '/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
-
-font = fm.FontProperties(fname=fontpath, size=9)
-
-fm._rebuild()
 
 # 그래프에 retina display 적용
 
