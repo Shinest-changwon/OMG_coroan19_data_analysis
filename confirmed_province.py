@@ -11,18 +11,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.pylab as py
 
-# Commented out IPython magic to ensure Python compatibility.
-# 한글 폰트 불러오기
 
 !apt -qq -y install fonts-nanum > /dev/null
 
 import matplotlib.font_manager as fm
 
 fontpath = '/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
-
-font = fm.FontProperties(fname=fontpath, size=9)
-
-fm._rebuild()
 
 # 그래프에 retina display 적용
 
@@ -173,6 +167,25 @@ confirmed['sudo_new'] = sudo_new_list
 confirmed['gandong_new'] = gandong_new_list
 
 confirmed.iloc[:, 22:29]
+
+"""# 4. 지역별 신규 확진자 최대치인 날짜 구하기"""
+
+max_new_confirmed_date_youngnam = confirmed['youngnam_new'].idxmax()
+max_new_confirmed_num_youngnam = confirmed['youngnam_new'].max()
+max_new_confirmed_date_honam = confirmed['honam_new'].idxmax()
+max_new_confirmed_num_honam = confirmed['honam_new'].max()
+max_new_confirmed_date_hosae = confirmed['hosae_new'].idxmax()
+max_new_confirmed_num_hosae = confirmed['hosae_new'].max()
+max_new_confirmed_date_sudo = confirmed['sudo_new'].idxmax()
+max_new_confirmed_num_sudo = confirmed['sudo_new'].max()
+max_new_confirmed_date_gandong = confirmed['gandong_new'].idxmax()
+max_new_confirmed_num_gandong = confirmed['gandong_new'].max()
+
+print('영남지방 신규 확진자 최대인 날짜 :', max_new_confirmed_date_youngnam, ', 최대 신규 확진자 수 :',max_new_confirmed_num_youngnam, '명')
+print('호남지방 신규 확진자 최대인 날짜 :', max_new_confirmed_date_honam, ', 최대 신규 확진자 수 :',max_new_confirmed_num_honam,'명')
+print('호서지방 신규 확진자 최대인 날짜 :', max_new_confirmed_date_hosae, ', 최대 신규 확진자 수 :',max_new_confirmed_num_hosae,'명')
+print('수도권 신규 확진자 최대인 날짜: ', max_new_confirmed_date_sudo, ', 최대 신규 확진자 수 :',max_new_confirmed_num_sudo,'명')
+print('관동지방 신규 확진자 최대인 날짜: ', max_new_confirmed_date_gandong,', 최대 신규 확진자 수 :',max_new_confirmed_num_gandong,'명')
 
 """# 수도권 신규 확진자 및 누적 확진자 수 증가 양상"""
 
