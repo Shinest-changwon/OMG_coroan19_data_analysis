@@ -11,12 +11,20 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.pylab as py
 
+"""아래 코드는 한글 폰트 실행하는 코드이며 실행 후 코랩에서는 '런타임 다시 시작' 후 다른 코드들을 실행해야 한다."""
+
+# Commented out IPython magic to ensure Python compatibility.
+# 한글 폰트 불러오기
 
 !apt -qq -y install fonts-nanum > /dev/null
 
 import matplotlib.font_manager as fm
 
 fontpath = '/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
+
+font = fm.FontProperties(fname=fontpath, size=9)
+
+fm._rebuild()
 
 # 그래프에 retina display 적용
 
@@ -187,44 +195,63 @@ print('호서지방 신규 확진자 최대인 날짜 :', max_new_confirmed_date
 print('수도권 신규 확진자 최대인 날짜: ', max_new_confirmed_date_sudo, ', 최대 신규 확진자 수 :',max_new_confirmed_num_sudo,'명')
 print('관동지방 신규 확진자 최대인 날짜: ', max_new_confirmed_date_gandong,', 최대 신규 확진자 수 :',max_new_confirmed_num_gandong,'명')
 
+confirmed.columns.name=None
+confirmed = confirmed.reset_index()
+confirmed.head()
+
+len(confirmed.index)
+
+for i in range(len(confirmed.index)):
+    if confirmed['date'][i][8:10] == '21' or confirmed['date'][i][8:10] == '22' or confirmed['date'][i][8:10] == '23' or confirmed['date'][i][8:10] == '24' or confirmed['date'][i][8:10] == '25' or confirmed['date'][i][8:10] == '26' or confirmed['date'][i][8:10] == '27' or confirmed['date'][i][8:10] == '28' or confirmed['date'][i][8:10] == '30' or confirmed['date'][i][8:10] == '31' or confirmed['date'][i][8:10] == '02' or confirmed['date'][i][8:10] == '03' or confirmed['date'][i][8:10] == '04' or confirmed['date'][i][8:10] == '05' or confirmed['date'][i][8:10] == '06' or confirmed['date'][i][8:10] == '07' or confirmed['date'][i][8:10] == '08' or confirmed['date'][i][8:10] == '09' or confirmed['date'][i][8:10] == '10' or confirmed['date'][i][8:10] == '11' or confirmed['date'][i][8:10] == '12' or confirmed['date'][i][8:10] == '13' or confirmed['date'][i][8:10] == '14' or confirmed['date'][i][8:10] == '15' or confirmed['date'][i][8:10] == '16' or confirmed['date'][i][8:10] == '17' or confirmed['date'][i][8:10] == '18' or confirmed['date'][i][8:10] == '19' or confirmed['date'][i][8:10] == '20':
+        confirmed['date'] = confirmed['date'].replace([confirmed['date'][i]], '')
+
+confirmed['date'] = confirmed['date'].replace(['2020-01-29', '2020-03-01', '2020-04-01', '2020-05-01'], '')
+confirmed['date'] = confirmed['date'].replace(['2020-02-01'], 'Feb 1')
+confirmed['date'] = confirmed['date'].replace(['2020-02-29'], 'Feb 29')
+confirmed['date'] = confirmed['date'].replace(['2020-03-29'], 'Mar 29')
+confirmed['date'] = confirmed['date'].replace(['2020-04-29'], 'Apr 29')
+confirmed['date'] = confirmed['date'].replace(['2020-05-29'], 'May 29')
+confirmed.head(5)
+
 """# 수도권 신규 확진자 및 누적 확진자 수 증가 양상"""
 
 # 수도권 신규 확진자 및 누적 확진자 수 증가 양상 피벗 테이블 시각화
+ax = confirmed.plot(kind='bar', x='date', y='sudo_new',  color='Red',  fontsize=20, label='신규 확진자')
+ax2 = confirmed.plot(kind='line', x='date', y='sudo', color='DarkBlue',figsize=(30,5), secondary_y=True, fontsize=20, ax=ax, label='누적 확진자')
 
-ax = confirmed.plot(kind='line', y='sudo', color='DarkBlue',figsize=(30,5), rot=90, fontsize=20, label='누적 확진자')
-ax2 = confirmed.plot(kind='bar', y='sudo_new', secondary_y=True, color='Red', ax=ax, fontsize=20, label='신규 확진자')
-# plt.legend(loc=2)
 ax.set_xlabel('날짜', fontsize=20)
-ax.set_ylabel('누적 확진자', fontsize=20)
-ax2.set_ylabel('신규 확진자', fontsize=20)
+ax.set_ylabel('신규 확진자', fontsize=20)
+ax2.set_ylabel('누적 확진자', fontsize=20)
 plt.title('수도권 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=30)
 plt.tight_layout()
+# plt.legend(handles=(ax2,ax), labels=('a','b'))
+plt.rc('legend', fontsize=15)
 plt.show()
 
 """# 영남지방 신규 확진자 및 누적 확진자 수 증가 양상"""
 
 # 영남지방 신규 확진자 및 누적 확진자 수 증가 양상 피벗 테이블 시각화
+ax = confirmed.plot(kind='bar',x='date', y='youngnam_new', color='Red', figsize=(30,5), fontsize=20, label='신규 확진자')
+ax2 = confirmed.plot(kind='line',x='date', y='youngnam', secondary_y=True, color='DarkBlue', fontsize=20, ax=ax, label='누적 확진자')
 
-ax = confirmed.plot(kind='line', y='youngnam', color='DarkBlue',figsize=(30,5), rot=90, fontsize=20, label='누적 확진자')
-ax2 = confirmed.plot(kind='bar', y='youngnam_new', secondary_y=True, color='Red', ax=ax, fontsize=20, label='신규 확진자')
-# plt.legend(loc=2)
 ax.set_xlabel('날짜', fontsize=20)
-ax.set_ylabel('누적 확진자', fontsize=20)
-ax2.set_ylabel('신규 확진자', fontsize=20)
+ax.set_ylabel('신규 확진자', fontsize=20)
+ax2.set_ylabel('누적 확진자', fontsize=20)
 plt.title('영남지방 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=30)
 plt.tight_layout()
+ax.legend(loc='upper left', fancybox=True, shadow=True)
+ax2.legend(loc='center left')
 plt.show()
 
 """# 호남지방 신규 확진자 및 누적 확진자 수 증가 양상"""
 
 # 호남지방 신규 확진자 및 누적 확진자 수 증가 양상 피벗 테이블 시각화
+ax = confirmed.plot(kind='bar', x='date', y='honam_new',  color='Red', fontsize=20,figsize=(30,5), label='신규 확진자')
+ax2 = confirmed.plot(kind='line', x='date', y='honam', color='DarkBlue',secondary_y=True,ax=ax, fontsize=20, label='누적 확진자')
 
-ax = confirmed.plot(kind='line', y='honam', color='DarkBlue',figsize=(30,5), rot=90, fontsize=20, label='누적 확진자')
-ax2 = confirmed.plot(kind='bar', y='honam_new', secondary_y=True, color='Red', ax=ax, fontsize=20, label='신규 확진자')
-# plt.legend(loc=2)
 ax.set_xlabel('날짜', fontsize=20)
-ax.set_ylabel('누적 확진자', fontsize=20)
-ax2.set_ylabel('신규 확진자', fontsize=20)
+ax.set_ylabel('신규 확진자', fontsize=20)
+ax2.set_ylabel('누적 확진자', fontsize=20)
 plt.title('호남지방 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=30)
 plt.tight_layout()
 plt.show()
@@ -232,13 +259,12 @@ plt.show()
 """# 호서지방 신규 확진자 및 누적 확진자 수 증가 양상"""
 
 # 호서지방 신규 확진자 및 누적 확진자 수 증가 양상 피벗 테이블 시각화
+ax = confirmed.plot(kind='bar', x='date', y='hosae_new', color='Red',figsize=(30,5), fontsize=20, label='신규 확진자')
+ax2 = confirmed.plot(kind='line', x='date', y='hosae', color='DarkBlue',secondary_y=True, ax=ax, fontsize=20, label='누적 확진자')
 
-ax = confirmed.plot(kind='line', y='hosae', color='DarkBlue',figsize=(30,5), rot=90, fontsize=20, label='누적 확진자')
-ax2 = confirmed.plot(kind='bar', y='hosae_new', secondary_y=True, color='Red', ax=ax, fontsize=20, label='신규 확진자')
-# plt.legend(loc=2)
 ax.set_xlabel('날짜', fontsize=20)
-ax.set_ylabel('누적 확진자', fontsize=20)
-ax2.set_ylabel('신규 확진자', fontsize=20)
+ax.set_ylabel('신규 확진자', fontsize=20)
+ax2.set_ylabel('누적 확진자', fontsize=20)
 plt.title('호서지방 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=30)
 plt.tight_layout()
 plt.show()
@@ -246,13 +272,12 @@ plt.show()
 """# 관동지방 신규 확진자 및 누적 확진자 수 증가 양상"""
 
 # 관동지방 신규 확진자 및 누적 확진자 수 증가 양상 피벗 테이블 시각화
+ax = confirmed.plot(kind='bar', x='date', y='gandong_new', color='Red', figsize=(30,5), fontsize=20, label='신규 확진자')
+ax2 = confirmed.plot(kind='line', x='date', y='gandong', color='DarkBlue', secondary_y=True, ax=ax, fontsize=20, label='누적 확진자')
 
-ax = confirmed.plot(kind='line', y='gandong', color='DarkBlue',figsize=(30,5), rot=90, fontsize=20, label='누적 확진자')
-ax2 = confirmed.plot(kind='bar', y='gandong_new', secondary_y=True, color='Red', ax=ax, fontsize=20, label='신규 확진자')
-# plt.legend(loc=2)
 ax.set_xlabel('날짜', fontsize=20)
-ax.set_ylabel('누적 확진자', fontsize=20)
-ax2.set_ylabel('신규 확진자', fontsize=20)
+ax.set_ylabel('신규 확진자', fontsize=20)
+ax2.set_ylabel('누적 확진자', fontsize=20)
 plt.title('관동지방 신규 확진자 및 누적 확진자 수 증가 양상', fontsize=30)
 plt.tight_layout()
 plt.show()
